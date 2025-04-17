@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1016329630693",
+    "project_id": "smart-bin-iot-25eae",
+    "storage_bucket": "smart-bin-iot-25eae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016329630693:android:cc64c064c3995f7a22f50c",
+        "android_client_info": {
+          "package_name": "com.example.zero_waste_iot_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBN-zvlTqsS98qgncxz3KV3D5vcVs3f3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
