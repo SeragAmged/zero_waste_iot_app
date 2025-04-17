@@ -28,4 +28,13 @@ abstract class CustomTextStyle {
     height: 0.01,
     letterSpacing: 8,
   );
+
+  static const TextStyle dialogStyle = TextStyle(
+    color: Colors.black,
+    fontSize: 30,
+    fontFamily: 'Outfit',
+    fontWeight: FontWeight.w700,
+    height: 0.02,
+    letterSpacing: 2.25,
+  );
 }

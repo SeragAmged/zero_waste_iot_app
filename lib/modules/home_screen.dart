@@ -8,6 +8,7 @@ import 'package:zero_waste_iot_app/shared/assets.dart';
 import 'package:zero_waste_iot_app/shared/helpers/navigation_helper.dart';
 import 'package:zero_waste_iot_app/shared/helpers/responsive/context_width_extension.dart';
 import 'package:zero_waste_iot_app/shared/themes/colors.dart';
+import 'package:zero_waste_iot_app/shared/variabels.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -160,5 +161,5 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void toastTryAgain() => log("failed");
 
-  void sendQrCodeToken(Code code) async => log('code: ${code.text}');
+  void sendQrCodeToken(Code code) async => myId = int.parse(code.text!);
 }

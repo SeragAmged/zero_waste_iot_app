@@ -6,11 +6,8 @@ class DioHelper {
   static init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: "",
-        headers: {
-          "Content-Type": "application/json",
-          
-        },
+        baseUrl: "http://34.116.131.95/api/",
+        // headers: {"Content-Type": "application/json"},
         receiveDataWhenStatusError: true,
       ),
     );
@@ -47,10 +44,7 @@ class DioHelper {
     );
   }
 
-  
-
-
-   static Future<Response> putData({
+  static Future<Response> putData({
     required String url,
     required Map<String, dynamic> data,
     Map<String, dynamic>? query,
@@ -66,4 +60,3 @@ class DioHelper {
     );
   }
 }
-

@@ -4,12 +4,13 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zero_waste_iot_app/helper/image_classification_helper.dart';
-import 'package:zero_waste_iot_app/shared/assets.dart';
+import 'package:zero_waste_iot_app/modules/result_screen/result_screen.dart';
 import 'package:zero_waste_iot_app/shared/cubit/app_cubit.dart';
 import 'package:zero_waste_iot_app/shared/cubit/app_states.dart';
 import 'package:zero_waste_iot_app/shared/helpers/camera/camera_helper.dart';
+import 'package:zero_waste_iot_app/shared/helpers/navigation_helper.dart';
 import 'package:zero_waste_iot_app/shared/themes/colors.dart';
-import 'package:zero_waste_iot_app/shared/themes/font_styles.dart';
+import 'package:zero_waste_iot_app/shared/variabels.dart';
 
 class ClassificationScreen extends StatefulWidget {
   const ClassificationScreen({super.key});
@@ -20,7 +21,7 @@ class ClassificationScreen extends StatefulWidget {
 
 class _ClassificationScreenState extends State<ClassificationScreen> {
   @override
-  String? pridection;
+  String? prediction;
 
   @override
   Widget build(BuildContext context) {
@@ -36,33 +37,38 @@ class _ClassificationScreenState extends State<ClassificationScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 2,
+                        // flex: 2,
                         child: CameraPreview(CameraHelper.controller),
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(Assets.imagesBins),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Text(
-                              "Plastic",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFFFB800),
-                                fontSize: 40,
-                                fontFamily: 'Outfit',
-                                fontWeight: FontWeight.w800,
-                                height: 0.01,
-                                letterSpacing: 8,
-                              ),
-                            )
-                          ],
-                        ),
-                      )
+                      // Expanded(
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.center,
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: [
+                      //       Image.asset(Assets.imagesBins),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       if (prediction != null)
+                      //         Text(
+                      //           prediction!,
+                      //           textAlign: TextAlign.center,
+                      //           style: TextStyle(
+                      //             color: prediction == "paper"
+                      //                 ? const Color(0xFFFFB800)
+                      //                 : prediction == "plastic"
+                      //                     ? Colors.red
+                      //                     : Colors.green,
+                      //             fontSize: 40,
+                      //             fontFamily: 'Outfit',
+                      //             fontWeight: FontWeight.w800,
+                      //             height: 0.01,
+                      //             letterSpacing: 8,
+                      //           ),
+                      //         )
+                      //     ],
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -73,10 +79,31 @@ class _ClassificationScreenState extends State<ClassificationScreen> {
 
   late CameraImage cameraImage;
   List<Map<String, double>> imageList = [];
-
   late ImageClassificationHelper imageClassificationHelper;
-  Map<String, double>? classification;
   bool _isProcessing = false;
+  @override
+  void initState() {
+    // WidgetsBinding.instance.addObserver(this);
+    super.initState();
+    initCamera();
+    imageClassificationHelper = ImageClassificationHelper();
+    imageClassificationHelper.initHelper();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.paused:
+        CameraHelper.controller.stopImageStream();
+        break;
+      case AppLifecycleState.resumed:
+        if (!CameraHelper.controller.value.isStreamingImages) {
+          await CameraHelper.controller.startImageStream(imageAnalysis);
+        }
+        break;
+      default:
+    }
+  }
 
   // init camera
   initCamera() {
@@ -97,10 +124,10 @@ class _ClassificationScreenState extends State<ClassificationScreen> {
     var result =
         await imageClassificationHelper.inferenceCameraFrame(cameraImage);
     _isProcessing = false;
-    if (imageList.length < 10) {
+    if (imageList.length < 5) {
       imageList.add(result);
     }
-    if (imageList.length == 10) {
+    if (imageList.length == 5) {
       List<String> maxClasses = [];
 
       for (var image in imageList) {
@@ -119,21 +146,21 @@ class _ClassificationScreenState extends State<ClassificationScreen> {
         }
       }
 
-      log("my max class is${vote(maxClasses)}");
+      prediction = vote(maxClasses);
+      log("my max class is $prediction");
+
       imageList.clear();
+      firebaseuploadImage = await CameraHelper.controller.takePicture();
+      navigateAndFinish(
+          context,
+          ResultScreen(
+            prediction: prediction!,
+          ));
+      prediction = null;
       if (mounted) {
         setState(() {});
       }
     }
-  }
-
-  @override
-  void initState() {
-    // WidgetsBinding.instance.addObserver(this);
-    initCamera();
-    imageClassificationHelper = ImageClassificationHelper();
-    imageClassificationHelper.initHelper();
-    super.initState();
   }
 }
 

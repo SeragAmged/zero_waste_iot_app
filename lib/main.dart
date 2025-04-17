@@ -1,20 +1,29 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zero_waste_iot_app/firebase_options.dart';
 import 'package:zero_waste_iot_app/modules/home_screen.dart';
+import 'package:zero_waste_iot_app/modules/result_screen/result_screen.dart';
 import 'package:zero_waste_iot_app/shared/cubit/app_cubit.dart';
 import 'package:zero_waste_iot_app/shared/cubit/app_states.dart';
+import 'package:zero_waste_iot_app/shared/data/dio_helper.dart';
 import 'package:zero_waste_iot_app/shared/helpers/camera/camera_helper.dart';
+import 'package:zero_waste_iot_app/shared/helpers/socket_helper.dart';
 // import 'package:zero_waste_iot_app/shared/data/dio_helper.dart';
 
 import 'shared/bloc_observer.dart';
 
-void main()  async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // DioHelper.init();
- await CameraHelper .init();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  DioHelper.init();
+  await CameraHelper.init();
   Bloc.observer = MyBlocObserver();
+  await SocketHelper.init();
 
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
