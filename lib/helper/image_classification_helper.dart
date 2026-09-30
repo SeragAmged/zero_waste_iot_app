@@ -74,7 +74,7 @@ class ImageClassificationHelper {
   // inference camera frame
   Future<Map<String, double>> inferenceCameraFrame(
       CameraImage cameraImage) async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     var isolateModel = InferenceModel(cameraImage, null, interpreter.address,
         labels, inputTensor.shape, outputTensor.shape);
     return _inference(isolateModel);

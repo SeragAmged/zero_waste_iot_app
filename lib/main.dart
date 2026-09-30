@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zero_waste_iot_app/firebase_options.dart';
 import 'package:zero_waste_iot_app/modules/home_screen.dart';
-import 'package:zero_waste_iot_app/modules/result_screen/result_screen.dart';
 import 'package:zero_waste_iot_app/shared/cubit/app_cubit.dart';
 import 'package:zero_waste_iot_app/shared/cubit/app_states.dart';
 import 'package:zero_waste_iot_app/shared/data/dio_helper.dart';
