@@ -17,20 +17,18 @@ Zero Waste IoT is the Flutter kiosk app for an ESP32-powered smart bin. A camera
 
 | Area | What it does |
 | --- | --- |
-| **On-device ML** | TFLite image classifier (3 classes) running fully offline, with hardware delegates: XNNPACK on Android and Metal on iOS. |
+| **On-device ML** | TFLite image classifier (3 classes) running fully offline, with hardware delegates: XNNPACK on Android. |
 | **Non-blocking inference** | Inference runs in a long-lived background **Dart isolate**. The UI thread never does tensor work, so the camera preview stays smooth. |
 | **Real-time camera pipeline** | Live `CameraImage` stream, a hand-written YUV420 → RGB converter, resize, rotation fix and normalisation, all in the isolate. |
 | **Prediction stabilisation** | Frames are classified one at a time with back-pressure (frames that arrive while one is in flight are dropped). The final label is a **majority vote over 5 frames**, not a single noisy guess. |
 | **Human-in-the-loop learning** | A "Was my prediction correct?" flow uploads the captured image to Firebase Storage under the **correct** class folder, building a labeled dataset for retraining. |
 | **Hardware integration** | A TCP socket to the ESP32 receives the measured weight after the item drops, which drives the bin update. |
 | **Cloud and identity** | QR-code account linking (ZXing) plus a Dio REST client with token auth to update bin fill state and record throws. |
-| **Kiosk UI** | 1920×1080 design implemented from Figma, with a responsive helper layer and a custom Outfit type system. |
+| **Kiosk UI** | 1920×1080 design implemented from Figma, with a responsive helper layer. |
 
 ---
 
 ## Screens
-
-The UI is designed for a 1920×1080 bin display ([Figma design](https://www.figma.com/design/FpWpe0sQqKKzDnvTHR53Sa/Zero-Waste)).
 
 ### 1. Linking account
 Scan the QR code with your phone to link your account, download the app, or start without an account.
@@ -193,41 +191,3 @@ assets/
 ```
 
 ---
-
-## Getting started
-
-**Prerequisites:** Flutter SDK (Dart ≥ 3.4.3), a device with a camera, and a Firebase project.
-
-```sh
-# 1. Install dependencies
-flutter pub get
-
-# 2. Configure Firebase (generates lib/firebase_options.dart)
-flutterfire configure
-
-# 3. Point the app at your ESP32 and backend
-#    - ESP32 address: lib/shared/helpers/socket_helper.dart
-#    - REST base URL: lib/shared/data/dio_helper.dart
-
-# 4. Run
-flutter run
-```
-
----
-
-## Roadmap
-
-Planned improvements:
-- [ ] Move the ESP32 address and API base URL into environment-based configuration.
-- [ ] Replace the placeholder per-throw score with the weight-based `calculateScore` already written in the codebase.
-- [ ] Automate retraining: pull the Firebase class folders, fine-tune and export a new `.tflite`, then ship it via Firebase Remote Config or Model Downloader.
-- [ ] Add a confidence threshold so uncertain predictions ask the user instead of guessing.
-- [ ] Quantise the model (int8) to cut size and latency further.
-- [ ] Add unit tests for the voting logic and image conversion, and widget tests for the survey flow.
-- [ ] Add a glass class (the scoring logic already anticipates it).
-
----
-
-## Author
-
-Built by **Serag**. I'm open to opportunities in mobile, embedded/IoT and applied ML engineering.
